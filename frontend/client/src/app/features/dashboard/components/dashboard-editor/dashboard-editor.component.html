@@ -1,0 +1,157 @@
+<section class="dashboard-wrap">
+  <form class="editor-card" [formGroup]="editorForm" (ngSubmit)="saveContent()" novalidate>
+    <div class="editor-head">
+      <div>
+        <h1>Portfolio Dashboard</h1>
+        <p>Edit portfolio content with simple fields and save instantly.</p>
+      </div>
+      <button type="button" (click)="goToPortfolio()">Open Portfolio</button>
+    </div>
+
+    <section class="panel" formGroupName="hero">
+      <h2>Hero Section</h2>
+      <div class="field-grid two">
+        <label>Name<input type="text" formControlName="name" /></label>
+        <label>Title<input type="text" formControlName="title" /></label>
+      </div>
+      <div class="field-grid">
+        <label>Subtitle<textarea rows="3" formControlName="subtitle"></textarea></label>
+      </div>
+      <div class="field-grid">
+        <label>Intro<input type="text" formControlName="intro" /></label>
+      </div>
+      <div class="field-grid two">
+        <label>Or Upload Local Hero Image
+          <input type="file" accept="image/*" (change)="onHeroImageFileSelected($event)" />
+        </label>
+        <label>Upload CV (PDF/Doc)
+          <input type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" (change)="onCvFileSelected($event)" />
+        </label>
+      </div>
+    </section>
+
+    <section class="panel" formGroupName="about">
+      <h2>About Section</h2>
+      <div class="field-grid two">
+        <label>Heading<input type="text" formControlName="heading" /></label>
+        <label>Subheading<input type="text" formControlName="subheading" /></label>
+      </div>
+
+      <div class="repeat-wrap" formArrayName="paragraphs">
+        <div class="repeat-head">
+          <h3>Paragraphs</h3>
+          <button type="button" class="secondary" (click)="addParagraph()">Add Paragraph</button>
+        </div>
+        <div class="repeat-item" *ngFor="let paragraph of aboutParagraphs.controls; let i = index">
+          <label>Paragraph {{ i + 1 }}
+            <textarea [formControlName]="i" rows="3"></textarea>
+          </label>
+          <button type="button" class="danger" (click)="removeParagraph(i)">Remove</button>
+        </div>
+      </div>
+
+      <div class="repeat-wrap" formArrayName="stats">
+        <div class="repeat-head">
+          <h3>Stats</h3>
+          <button type="button" class="secondary" (click)="addStat()">Add Stat</button>
+        </div>
+        <div class="repeat-item split" *ngFor="let stat of aboutStats.controls; let i = index" [formGroupName]="i">
+          <label>Value<input type="text" formControlName="value" /></label>
+          <label>Label<input type="text" formControlName="label" /></label>
+          <button type="button" class="danger" (click)="removeStat(i)">Remove</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" formGroupName="skills">
+      <h2>Skills Section</h2>
+      <div class="field-grid two">
+        <label>Heading<input type="text" formControlName="heading" /></label>
+        <label>Subtitle<input type="text" formControlName="subtitle" /></label>
+      </div>
+
+      <div class="repeat-wrap" formArrayName="items">
+        <div class="repeat-head">
+          <h3>Skill Items</h3>
+          <button type="button" class="secondary" (click)="addSkill()">Add Skill</button>
+        </div>
+        <div class="repeat-item split" *ngFor="let item of skillItems.controls; let i = index" [formGroupName]="i">
+          <label>Name<input type="text" formControlName="name" /></label>
+          <label>Level (0-100)<input type="number" formControlName="level" min="0" max="100" /></label>
+          <label>Color Class
+            <select formControlName="colorClass">
+              <option value="cyan-fill">Cyan</option>
+              <option value="blue-fill">Blue</option>
+              <option value="purple-fill">Purple</option>
+              <option value="pink-fill">Pink</option>
+            </select>
+          </label>
+          <button type="button" class="danger" (click)="removeSkill(i)">Remove</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" formGroupName="projects">
+      <h2>Projects Section</h2>
+      <div class="field-grid two">
+        <label>Heading<input type="text" formControlName="heading" /></label>
+        <label>Subtitle<input type="text" formControlName="subtitle" /></label>
+      </div>
+
+      <div class="repeat-wrap" formArrayName="items">
+        <div class="repeat-head">
+          <h3>Project Items</h3>
+          <button type="button" class="secondary" (click)="addProject()">Add Project</button>
+        </div>
+        <div class="project-card" *ngFor="let project of projectItems.controls; let projectIndex = index" [formGroupName]="projectIndex">
+          <div class="field-grid">
+            <label>Title<input type="text" formControlName="title" /></label>
+          </div>
+          <div class="field-grid two">
+            <label>Demo Link<input type="url" formControlName="demoUrl" placeholder="https://..." /></label>
+            <label>Or Upload Local Project Image
+              <input type="file" accept="image/*" (change)="onProjectImageFileSelected(projectIndex, $event)" />
+            </label>
+          </div>
+          <label>Description<textarea rows="3" formControlName="description"></textarea></label>
+
+          <div class="repeat-wrap" formArrayName="tech">
+            <div class="repeat-head">
+              <h3>Tech Stack</h3>
+              <button type="button" class="secondary" (click)="addTech(projectIndex)">Add Tech</button>
+            </div>
+            <div class="repeat-item tech-row" *ngFor="let tech of getTechArray(projectIndex).controls; let techIndex = index">
+              <input type="text" [formControlName]="techIndex" />
+              <button type="button" class="danger" (click)="removeTech(projectIndex, techIndex)">Remove</button>
+            </div>
+          </div>
+
+          <button type="button" class="danger project-remove" (click)="removeProject(projectIndex)">Remove Project</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" formGroupName="contact">
+      <h2>Contact Section</h2>
+      <div class="field-grid two">
+        <label>Heading<input type="text" formControlName="heading" /></label>
+        <label>Subtitle<input type="text" formControlName="subtitle" /></label>
+      </div>
+
+      <div class="field-grid three" formGroupName="info">
+        <label>Email<input type="email" formControlName="email" /></label>
+        <label>Phone<input type="text" formControlName="phone" /></label>
+        <label>Location<input type="text" formControlName="location" /></label>
+      </div>
+    </section>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+    <div class="actions">
+      <button type="submit">Save Changes</button>
+      <button type="button" class="secondary" (click)="resetContent()">Reset Default</button>
+      <button type="button" class="secondary" (click)="loadContent()">Reload Current</button>
+    </div>
+  </form>
+</section>

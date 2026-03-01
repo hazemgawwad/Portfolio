@@ -1,0 +1,227 @@
+<ng-container *ngIf="data as content; else loadState">
+<div class="portfolio-root">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="brand-wrap">
+        <div class="brand-icon">&lt;/&gt;</div>
+        <span class="brand-name">Hazem Gawwad</span>
+      </div>
+
+      <div class="nav-links">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero section-pad">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <span class="pill">👋 Welcome to my portfolio</span>
+        <h1>
+          Hi, I'm
+          <span>{{ content.hero.name }}</span>
+        </h1>
+        <p class="hero-title">{{ content.hero.title }}</p>
+        <p class="hero-desc">{{ content.hero.subtitle }}</p>
+
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-primary">View Projects</a>
+          <a
+            *ngIf="content.hero.cvUrl; else noCv"
+            [href]="content.hero.cvUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-secondary"
+          >
+            Download My CV
+          </a>
+          <ng-template #noCv>
+            <button type="button" class="btn btn-secondary" disabled>Download My CV</button>
+          </ng-template>
+        </div>
+
+        <div class="hero-social">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GH</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">IN</a>
+          <a href="mailto:hazem@example.com">@</a>
+        </div>
+      </div>
+
+      <div class="hero-media" appHighlightCard>
+        <img [src]="content.hero.image" alt="Developer workspace" />
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="about section-pad section-soft">
+    <div class="container">
+      <div class="section-head">
+        <h2>{{ content.about.heading }}</h2>
+        <div class="line"></div>
+        <p>{{ content.about.subheading }}</p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p *ngFor="let paragraph of content.about.paragraphs">{{ paragraph }}</p>
+        </div>
+
+        <div class="stats-grid">
+          <article *ngFor="let stat of content.about.stats" appHighlightCard>
+            <h3>{{ stat.value }}</h3>
+            <p>{{ stat.label }}</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="skills section-pad">
+    <div class="container">
+      <div class="section-head">
+        <h2>{{ content.skills.heading }}</h2>
+        <div class="line"></div>
+        <p>{{ content.skills.subtitle }}</p>
+      </div>
+
+      <div class="skills-bars">
+        <div class="skill-item" *ngFor="let skill of content.skills.items">
+          <div class="skill-head">
+            <span>{{ skill.name }}</span>
+            <span>{{ skill.level | skillLevel }}</span>
+          </div>
+          <div class="track">
+            <div class="fill" [ngClass]="skill.colorClass" [style.width.%]="skill.level"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="skills-highlights">
+        <article appHighlightCard><div>📱</div><h3>Responsive Design</h3></article>
+        <article appHighlightCard><div>⚡</div><h3>Performance</h3></article>
+        <article appHighlightCard><div>🎨</div><h3>UI/UX</h3></article>
+        <article appHighlightCard><div>🔧</div><h3>Best Practices</h3></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="projects section-pad section-soft">
+    <div class="container">
+      <div class="section-head">
+        <h2>{{ content.projects.heading }}</h2>
+        <div class="line"></div>
+        <p>{{ content.projects.subtitle }}</p>
+      </div>
+
+      <div class="projects-grid">
+        <article *ngFor="let project of content.projects.items" appHighlightCard>
+          <img [src]="project.image" [alt]="project.title" />
+          <div class="project-body">
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.description }}</p>
+            <div class="chips">
+              <span *ngFor="let stack of project.tech">{{ stack }}</span>
+            </div>
+            <a
+              *ngIf="project.demoUrl; else noDemo"
+              [href]="project.demoUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="demo-btn"
+            >
+              Live Demo
+            </a>
+            <ng-template #noDemo>
+              <button type="button" disabled>Live Demo</button>
+            </ng-template>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact section-pad">
+    <div class="container">
+      <div class="section-head">
+        <h2>{{ content.contact.heading }}</h2>
+        <div class="line"></div>
+        <p>{{ content.contact.subtitle }}</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h3>Contact Information</h3>
+          <div class="info-row"><span>Email</span><p>{{ content.contact.info.email }}</p></div>
+          <div class="info-row"><span>Phone</span><p>{{ content.contact.info.phone }}</p></div>
+          <div class="info-row"><span>Location</span><p>{{ content.contact.info.location }}</p></div>
+        </div>
+
+        <form #contactForm="ngForm" (ngSubmit)="submitContactForm(contactForm)" class="contact-form" novalidate>
+          <label>Name
+            <input name="name" [(ngModel)]="contactModel.name" required minlength="2" />
+          </label>
+
+          <label>Email
+            <input name="email" type="email" [(ngModel)]="contactModel.email" required email />
+          </label>
+
+          <label>Message
+            <textarea
+              name="message"
+              rows="5"
+              [(ngModel)]="contactModel.message"
+              required
+              minlength="20"
+            ></textarea>
+          </label>
+
+          <small *ngIf="contactValidationForm.get('message')?.hasError('noUrl') && submitted" class="error">
+            Message must not include URLs.
+          </small>
+          <small *ngIf="formError" class="error">{{ formError }}</small>
+
+          <button type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Hazem Gawwad</h3>
+        <p>Frontend Developer passionate about creating beautiful and functional web experiences.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <div class="foot-social">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GH</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">IN</a>
+          <a href="mailto:hazem@example.com">@</a>
+        </div>
+      </div>
+    </div>
+    <p class="copy">© 2026 Hazem Gawwad. All rights reserved.</p>
+  </footer>
+</div>
+</ng-container>
+
+<ng-template #loadState>
+  <section class="page-state">
+    <div class="state-card" *ngIf="isLoading">Loading portfolio...</div>
+    <div class="state-card error" *ngIf="!isLoading && loadError">
+      <p>{{ loadError }}</p>
+      <button type="button" (click)="reloadPortfolio()">Retry</button>
+    </div>
+  </section>
+</ng-template>
